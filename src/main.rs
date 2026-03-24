@@ -19,6 +19,7 @@
 #![warn(clippy::missing_errors_doc)]
 #![warn(clippy::result_large_err)]
 
+use std::time::Duration;
 use aws_config::BehaviorVersion;
 use aws_sdk_s3::primitives::ByteStream;
 use image::imageops::FilterType;
@@ -217,7 +218,10 @@ fn run() -> AppResult<()> {
 
     let uploader = build_uploader()?;
     let content = fs::read_to_string(&input_file).map_err(|e| Box::new(AppError::from(e)))?;
-    let client = Client::new();
+let client = Client::builder()
+    .timeout(Duration::from_secs(15))
+    .build()
+    .map_err(|e| Box::new(AppError::from(e)))?;
 
     for (index, line) in content.lines().enumerate() {
         let source = line.trim();
