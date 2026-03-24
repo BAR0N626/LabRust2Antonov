@@ -19,6 +19,7 @@
 #![warn(clippy::missing_errors_doc)]
 #![warn(clippy::result_large_err)]
 
+use std::time::{SystemTime, UNIX_EPOCH};
 use std::time::Duration;
 use aws_config::BehaviorVersion;
 use aws_sdk_s3::primitives::ByteStream;
@@ -352,7 +353,12 @@ fn process_one(
         .write_to(&mut Cursor::new(&mut buffer), ImageFormat::Png)
         .map_err(|e| Box::new(AppError::from(e)))?;
 
-    let filename = format!("resized_{index}.png");
+    let now = SystemTime::now()
+    .duration_since(UNIX_EPOCH)
+    .unwrap()
+    .as_millis();
+
+let filename = format!("resized_{index}_{now}.png");
     Ok((buffer, filename))
 }
 
