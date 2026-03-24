@@ -224,26 +224,36 @@ let client = Client::builder()
     .build()
     .map_err(|e| Box::new(AppError::from(e)))?;
 
-    for (index, line) in content.lines().enumerate() {
-        let source = line.trim();
+    let mut had_errors = false;
 
-        if source.is_empty() {
-            continue;
-        }
+for (index, line) in content.lines().enumerate() {
+    let source = line.trim();
 
-        match process_one(&client, source, width, height, index + 1) {
-            Ok((bytes, filename)) => {
-                if let Err(err) = uploader.upload(bytes, &filename) {
-                    eprintln!("Рядок {}: {} -> {}", index + 1, source, err);
-                }
-            }
-            Err(err) => {
-                eprintln!("Рядок {}: {} -> {}", index + 1, source, err);
-            }
-        }
+    if source.is_empty() {
+        continue;
     }
 
-    Ok(())
+    match process_one(&client, source, width, height, index + 1) {
+        Ok((bytes, filename)) => {
+            if let Err(err) = uploader.upload(bytes, &filename) {
+                eprintln!("Рядок {}: {} -> {}", index + 1, source, err);
+                had_errors = true;
+            }
+        }
+        Err(err) => {
+            eprintln!("Рядок {}: {} -> {}", index + 1, source, err);
+            had_errors = true;
+        }
+    }
+}
+
+if had_errors {
+    return Err(Box::new(AppError::InvalidArguments(
+        "одна або більше операцій завершились помилкою".to_string(),
+    )));
+}
+
+Ok(())
 }
 
 /// Створює потрібний тип відвантажувача за значенням `MYME_UPLOADER`.
