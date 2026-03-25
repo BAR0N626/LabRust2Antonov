@@ -1,5 +1,0 @@
-Access Key ID tid_daoqgEKmCYbGPYUOhevROtzTkzFPjyUDEvuPgwHLfhes_jukNT
-Secret Access Key tsec_C0q-rBUjkvinE9R1IXp1U0ML1fUubdqeZ79whLgDilBkz8V1TXFGxGw2d1BrbPICUQ9Uvu
-Endpoint URL S3 https://t3.storage.dev
-Endpoint URL IAM https://t3.storage.dev
-Region auto
